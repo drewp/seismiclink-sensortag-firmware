@@ -101,6 +101,7 @@
 // .. registers 0x63 - 0x67 are not applicable to the SensorTag HW configuration
 
 #define SIGNAL_PATH_RESET             0x68 // R/W
+//TODO(Cashdollar): this is related to the configuration of wake-on motion and may need to be addressed
 #define ACCEL_INTEL_CTRL              0x69 // R/W
 #define USER_CTRL                     0x6A // R/W
 #define PWR_MGMT_1                    0x6B // R/W
@@ -369,7 +370,9 @@ bool sensorMpu9250Reset(void)
   if (ret)
   {
     // Initial configuration
-    sensorMpu9250AccSetRange(ACC_RANGE_8G);
+        //TODO (CASHDOLLAR): Change range to 2G
+    //sensorMpu9250AccSetRange(ACC_RANGE_8G);
+    sensorMpu9250AccSetRange(ACC_RANGE_2G);
     sensorMagInit();
 
     // Power save
@@ -407,6 +410,7 @@ bool sensorMpu9250WomEnable(uint8_t threshold)
   ST_ASSERT(sensorWriteReg(PWR_MGMT_2, &val, 1));
 
   // Set Accel LPF setting to 184 Hz Bandwidth
+    //TODO(Cashdollar): Check to see if this is the bandwidth we want
   val = 0x01;
   ST_ASSERT(sensorWriteReg(ACCEL_CONFIG_2, &val, 1));
 
@@ -423,6 +427,10 @@ bool sensorMpu9250WomEnable(uint8_t threshold)
   ST_ASSERT(sensorWriteReg(WOM_THR, &val, 1));
 
   // Set Frequency of Wake-up
+    //TODO(CASHDOLLAR): Look at this wake up ODR and see if it is sufficient
+  /*When set, and SLEEP and STANDBY are not set, the chip will cycle
+    between sleep and taking a single sample at a rate determined by
+    LP_ACCEL_ODR register*/
   val = INV_LPA_20HZ;
   ST_ASSERT(sensorWriteReg(LP_ACCEL_ODR, &val, 1));
 
@@ -930,6 +938,7 @@ void sensorMpu9250MagReset(void)
   }
 }
 
+//TODO: May want to disable this
 
 /*******************************************************************************
  * @fn          sensorMagEnable
